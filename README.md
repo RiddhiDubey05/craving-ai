@@ -1,73 +1,78 @@
-# CravingAI — Multimodal RAG Restaurant Recommendation System
+# 🍽️ CravingAI
 
-A production-grade, highly interactive AI restaurant and dish recommendation engine (similar to Zomato & Swiggy combined with a ChatGPT-style conversational backend). Powered by hybrid text + image search queries, a FAISS vector database, AWS S3 image storage, and AWS Bedrock (Claude 3.5 Sonnet + Titan Multimodal Embeddings).
+**The smartest way to discover your next meal.**
 
-## Project Structure
+Have you ever spent 30 minutes scrolling through food delivery apps, overwhelmed by choices, only to end up ordering the same thing you always do? We believe finding great food shouldn't feel like a chore. It should feel like discovering a hidden gem.
 
+CravingAI exists to solve the "what should I eat?" fatigue. We combined the visual inspiration of Pinterest, the seamless discovery of Swiggy/Zomato, and the intelligence of a personal AI concierge into one fluid experience. 
+
+Whether you're craving "something spicy and warm for a rainy day" or looking for the highest-rated vegan spot under $15, CravingAI understands your exact mood, budget, and taste.
+
+---
+
+## 🌟 The Experience
+
+CravingAI isn't just a search bar—it's a personalized food discovery engine. 
+
+### 🧭 Explore What's Good
+Drop into our **Explore Feed** to instantly see what's trending globally, uncover highly-rated hidden gems, and find the best meals under budget. No searching required.
+
+### 🤖 Chat with Your Personal Food Concierge
+Don't know what you want? Just ask. 
+*“I just finished a heavy workout and need high-protein Mediterranean food nearby.”* 
+Our AI concierge will instantly analyze your request, chat with you about your preferences, and present curated, real-time dish recommendations alongside the conversation.
+
+### 📸 Search by Vibe (Multimodal AI)
+Sometimes you don't have the words for what you want—you just have a craving. Drag and drop a photo of a dish, adjust the slider to balance visual similarity with your text instructions, and let our Multimodal AI find exactly what you're looking for.
+
+### 🛒 Seamless Checkout & Cart
+Found something you love? Add it to your cart, adjust quantities, and check out instantly with our beautiful, frictionless slide-over UI.
+
+---
+
+## 🛠️ Built for Scale (The Tech)
+
+While CravingAI feels simple and human on the outside, it is powered by a robust, production-grade AI backend built to handle scale and complexity.
+
+- **The Brain:** Powered by AWS Bedrock (Claude 3.5 Sonnet) for natural language reasoning and Titan Multimodal Embeddings for processing image + text queries.
+- **The Engine:** A lightning-fast FAISS vector database enables real-time semantic retrieval of thousands of dishes.
+- **The Platform:** A high-performance FastAPI Python backend seamlessly connected to a modern, glassmorphic UI via vanilla JS/HTML/CSS for maximum speed.
+- **The Infrastructure:** Fully containerized with Docker, featuring automatic data seeding and local fallbacks for seamless deployment anywhere.
+
+---
+
+## 🚀 Get Started
+
+Want to run CravingAI locally? It takes less than 2 minutes.
+
+### 1. Configure the Environment
+Clone the repository and set up your environment variables.
+```bash
+cp .env.example .env
+# Edit .env with your AWS credentials or SMTP settings if you wish to use real emails
 ```
-├── backend/                  # FastAPI Web Server
-│   ├── api/                  # API Routers (upload, recommend, chat)
-│   ├── config.py             # Config & Pydantic settings loading
-│   ├── db/                   # FAISS Database management & Auto-seeding
-│   ├── main.py               # Application entrypoint & static mounting
-│   ├── models/               # Request & Response Pydantic schemas
-│   ├── services/             # S3 storage, Bedrock Titan, and Claude LLM
-│   ├── utils/                # Logging & latency utilities
-│   └── requirements.txt      # Python dependencies (NumPy, Pillow, Boto3, FAISS)
-├── frontend/                 # Glassmorphic Dark-Mode UI (served by FastAPI)
-│   ├── index.html            # Main markup page
-│   ├── style.css             # Glassmorphism styling & animations
-│   └── app.js                # Frontend controller & API integrations
-├── data/                     # Local data storage for fallbacks & cached images
-├── vector_db/                # Saved FAISS index files
-├── Dockerfile                # Production Docker deployment
-└── docker-compose.yml        # Multi-container volume-mapped orchestration
-```
 
----
-
-## Features
-
-- **Multimodal Hybrid Search**: Search for food using text keywords or uploaded images (drag & drop). Adjust the relative influence of text vs. image embeddings via an interactive weight slider.
-- **RAG Latency Dashboard**: Real-time performance stats showing API processing latency and FAISS vector retrieval times.
-- **Conversational recommendation Assistant (Chat)**: Converse with the AI to refine restaurant listings or discuss diet plans. Retrieved matches are displayed side-by-side with chat history.
-- **Automatic Fallback Modes**: Automatic seed execution if the FAISS index is empty on startup. Automatically switches to local disk fallback for S3 storage and mock embeddings if AWS credentials are not configured.
-
----
-
-## Setup & Running Guide
-
-### Method A: Local execution (FastAPI + Embedded Frontend)
-
-1. **Clone and Configure Env**:
-   Copy the `.env.example` file to `.env` and fill in your AWS credentials:
-   ```powershell
-   copy .env.example .env
-   ```
-
-2. **Initialize Python Environment**:
-   Ensure you have Python 3.12+ installed. Run:
-   ```powershell
-   python -m venv venv
-   .\venv\Scripts\activate
-   pip install -r backend/requirements.txt
-   ```
-
-3. **Start the server**:
-   ```powershell
-   python -m uvicorn backend.main:app --port 8000 --reload
-   ```
-
-4. **Access the App**:
-   - Go to **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)** to interact with the visual web interface.
-   - Go to **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)** to inspect the OpenAPI docs.
-
----
-
-### Method B: Containerized Execution (Docker Compose)
-
-To launch the system in an isolated container mapping persistent volumes for image caching and search indices:
+### 2. Run with Docker (Recommended)
+Launch the fully orchestrated environment in one command:
 ```bash
 docker compose up --build
 ```
-Once initialized, visit **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)**.
+*Visit **http://localhost:8000** to experience CravingAI.*
+
+### 3. Run Locally (Manual)
+If you prefer to run it outside of Docker:
+```bash
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # Or .\venv\Scripts\activate on Windows
+
+# Install dependencies
+pip install -r backend/requirements.txt
+
+# Start the API server
+python -m uvicorn backend.main:app --port 8000 --reload
+```
+
+---
+
+*Designed and engineered for food lovers who want more than just a list of restaurants.*
