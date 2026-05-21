@@ -104,31 +104,31 @@ def send_otp_email(recipient_email: str, otp_code: str) -> bool:
             resp_data = response.json()
             email_id = resp_data.get("id", "unknown")
             app_logger.info(
-                f"✅ OTP email sent successfully to {recipient_email} "
+                f"[OK] OTP email sent to {recipient_email} "
                 f"(Resend ID: {email_id})"
             )
             return True
         else:
             app_logger.error(
-                f"❌ Resend API error for {recipient_email}: "
-                f"HTTP {response.status_code} — {response.text}"
+                f"[FAIL] Resend API error for {recipient_email}: "
+                f"HTTP {response.status_code} - {response.text}"
             )
             return False
 
     except requests.exceptions.Timeout:
         app_logger.error(
-            f"❌ Resend API timeout sending to {recipient_email}. "
+            f"[FAIL] Resend API timeout sending to {recipient_email}. "
             "Check network connectivity."
         )
         return False
     except requests.exceptions.ConnectionError:
         app_logger.error(
-            f"❌ Cannot reach Resend API. "
+            f"[FAIL] Cannot reach Resend API. "
             "Check internet connection or firewall settings."
         )
         return False
     except Exception as e:
         app_logger.error(
-            f"❌ Unexpected error sending OTP email to {recipient_email}: {e}"
+            f"[FAIL] Unexpected error sending OTP email to {recipient_email}: {e}"
         )
         return False
