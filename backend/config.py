@@ -46,9 +46,14 @@ class Settings(BaseSettings):
         alias="CORS_ORIGINS",
     )
     
-    # ── Email / SMTP ──────────────────────────────────────────────────────────
-    smtp_email: str = Field(default="", alias="SMTP_EMAIL")
-    smtp_password: str = Field(default="", alias="SMTP_PASSWORD")
+    # ── Resend Email API ──────────────────────────────────────────────────────
+    resend_api_key: str = Field(default="", alias="RESEND_API_KEY")
+    # Must be a verified sender domain in your Resend dashboard.
+    # In dev you can use: onboarding@resend.dev (only sends to your own email)
+    resend_from_email: str = Field(
+        default="onboarding@resend.dev",
+        alias="RESEND_FROM_EMAIL",
+    )
 
 
 @lru_cache()

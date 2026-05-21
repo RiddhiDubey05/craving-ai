@@ -50,15 +50,23 @@ async def send_otp(req: SendOTPRequest):
     except ValueError as e:
         raise HTTPException(status_code=429, detail=str(e))
     
-    # Real Email Delivery
+    # Real Email Delivery via Resend
     success = send_otp_email(phone_or_email, code)
     if not success:
-        app_logger.error(f"Failed to send real OTP email to {phone_or_email}. Check SMTP credentials.")
-        # Fallback to mock OTP so local dev isn't blocked
-        app_logger.warning(f"MOCK OTP Fallback: OTP for {phone_or_email} is {code}")
-        return {"message": f"OTP sent to {phone_or_email} (check server console)"}
+        app_logger.error(
+            f"Failed to send OTP email to {phone_or_email}. "
+            "Check RESEND_API_KEY in .env and backend logs."
+        )
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Email delivery failed. "
+                "Please check your email address and try again. "
+                "If this persists, contact support."
+            )
+        )
     
-    app_logger.info(f"Successfully initiated OTP email to {phone_or_email}")
+    app_logger.info(f"OTP email dispatched successfully to {phone_or_email}")
     return {"message": f"OTP sent to {phone_or_email}"}
 
 
@@ -99,3 +107,18 @@ async def logout(authorization: Optional[str] = Header(None)):
         token = authorization.split(" ")[1]
         db_manager.delete_session(token)
     return {"message": "Logged out successfully"}
+
+
+@router.get("/test-email")
+async def test_email(to: str):
+    """
+    Diagnostic endpoint: send a test OTP email to verify Resend is configured.
+    Usage: GET /api/auth/test-email?to=yourname@gmail.com
+    """
+    success = send_otp_email(to, "123456")
+    if success:
+        return {"status": "ok", "message": f"Test email sent to {to}. Check your inbox!"}
+    raise HTTPException(
+        status_code=503,
+        detail="Email failed. Check RESEND_API_KEY in .env and server logs for details."
+    )
