@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  craving-ai-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: craving-ai-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/data:/app/backend/data
+      - ./.env:/app/.env
+    restart: unless-stopped
+    environment:
+      - ENVIRONMENT=production
