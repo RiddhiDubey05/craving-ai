@@ -46,14 +46,13 @@ class Settings(BaseSettings):
         alias="CORS_ORIGINS",
     )
     
-    # ── Resend Email API ──────────────────────────────────────────────────────
-    resend_api_key: str = Field(default="", alias="RESEND_API_KEY")
-    # Must be a verified sender domain in your Resend dashboard.
-    # In dev you can use: onboarding@resend.dev (only sends to your own email)
-    resend_from_email: str = Field(
-        default="onboarding@resend.dev",
-        alias="RESEND_FROM_EMAIL",
-    )
+    # ── Brevo (Sendinblue) Transactional Email API ────────────────────────────
+    # Free tier: 300 emails/day, sends to ANY email, no domain needed.
+    # Sign up: https://app.brevo.com → Settings → API Keys → Generate
+    brevo_api_key: str = Field(default="", alias="BREVO_API_KEY")
+    # Must match the email you used to register at Brevo (auto-verified sender)
+    brevo_from_email: str = Field(default="", alias="BREVO_FROM_EMAIL")
+    brevo_from_name: str = Field(default="CravingAI", alias="BREVO_FROM_NAME")
 
 
 @lru_cache()
