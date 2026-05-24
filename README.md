@@ -58,7 +58,7 @@ Launch the fully orchestrated environment in one command:
 ```bash
 docker compose up --build
 ```
-*Visit **(http://localhost:3000/)** to experience CravingAI.*
+*Visit ** http://localhost:3000/** to experience CravingAI.*
 
 ### 3. Run Locally (Manual)
 If you prefer to run it outside of Docker:
