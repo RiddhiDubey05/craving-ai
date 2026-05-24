@@ -1,0 +1,37 @@
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex 0f86bb0..bcc64d2 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,11 +1,13 @@[m
+[31m-<<<<<<< HEAD[m
+ # dependencies[m
+[31m-node_modules/[m
+[31m-[m
+[31m-# env files[m
+[32m+[m[32m# env files (DO NOT COMMIT SECRETS)[m
+ .env[m
+ .env.local[m
+[31m-.env.*[m
+[32m+[m[32m.env.development[m
+[32m+[m[32m.env.production[m
+[32m+[m[32m.env.test[m
+[32m+[m
+[32m+[m[32m# keep example file[m
+[32m+[m[32m!.env.example[m
+ [m
+ # logs[m
+ npm-debug.log*[m
+[36m@@ -29,7 +31,6 @@[m [mThumbs.db[m
+ [m
+ # misc[m
+ *.log[m
+[31m-=======[m
+ # Environments[m
+ .env[m
+ .env.*[m
+[36m@@ -58,4 +59,4 @@[m [mscratch/[m
+ .vscode/[m
+ .idea/[m
+ .DS_Store[m
+[31m->>>>>>> b74da2c25a4476cc0700f9201f545cce0b0ec782[m
+[41m+[m
