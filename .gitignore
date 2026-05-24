@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # dependencies
 node_modules/
 
@@ -28,3 +29,33 @@ Thumbs.db
 
 # misc
 *.log
+=======
+# Environments
+.env
+.env.*
+!.env.example
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Data and Models
+data/
+vector_db/
+
+# Scratch & Logs
+scratch/
+*.log
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+>>>>>>> b74da2c25a4476cc0700f9201f545cce0b0ec782
