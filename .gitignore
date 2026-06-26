@@ -1,36 +1,7 @@
-<<<<<<< HEAD
-# dependencies
+# Dependencies
 node_modules/
 
-# env files
-.env
-.env.local
-.env.*
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# build
-dist/
-build/
-
-# cache
-.cache/
-.vite/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-
-# misc
-*.log
-=======
-# Environments
+# Environment files
 .env
 .env.*
 !.env.example
@@ -46,16 +17,31 @@ __pycache__/
 *$py.class
 *.so
 
+# Build
+dist/
+build/
+
+# Cache
+.cache/
+.vite/
+
 # Data and Models
 data/
 vector_db/
 
-# Scratch & Logs
-scratch/
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # IDEs
 .vscode/
 .idea/
+
+# OS files
 .DS_Store
->>>>>>> b74da2c25a4476cc0700f9201f545cce0b0ec782
+Thumbs.db
+
+# Scratch
+scratch/
