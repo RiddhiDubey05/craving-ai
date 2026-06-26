@@ -1,18 +1,9 @@
 import { useState } from 'react';
-import { Search, User, Settings, Lock, Trash2, Edit3 } from 'lucide-react';
+import { User, Settings, Lock, Trash2, Edit3, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Header({ onSearch }) {
-  const [isSearching, setIsSearching] = useState(false);
-  const [query, setQuery] = useState('');
+export default function Header({ currentCity, onOpenProfile }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (query.trim() && onSearch) {
-      onSearch(query);
-    }
-  };
 
   return (
     <motion.header
@@ -43,12 +34,34 @@ export default function Header({ onSearch }) {
         <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: '800', color: '#FFF', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>CravingAI.</h2>
       </div>
 
-      {/* Right Side: Profile & Search */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-        
-        {/* Profile Dropdown */}
+        <button
+          type="button"
+          onClick={onOpenProfile}
+          style={{
+            border: '1px solid rgba(255,255,255,0.35)',
+            background: 'rgba(255,255,255,0.16)',
+            color: '#FFF',
+            borderRadius: '999px',
+            padding: '10px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            fontWeight: 800,
+            maxWidth: '42vw',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+          title="Change location"
+        >
+          <MapPin size={16} />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentCity || 'Set location'}</span>
+        </button>
+
         <div style={{ position: 'relative' }}>
-          <motion.div 
+          <motion.div
             whileHover={{ scale: 1.05 }}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             style={{
@@ -92,6 +105,7 @@ export default function Header({ onSearch }) {
                 <div style={{ padding: '15px', borderBottom: '1px solid #EEE', fontWeight: 'bold', color: '#333' }}>
                   Account Settings
                 </div>
+                <button onClick={() => { setIsMenuOpen(false); onOpenProfile && onOpenProfile(); }} style={{ padding: '12px 15px', border: 'none', background: 'transparent', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', color: '#555', fontSize: '0.9rem' }}><MapPin size={16}/> Location</button>
                 <button style={{ padding: '12px 15px', border: 'none', background: 'transparent', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', color: '#555', fontSize: '0.9rem' }}><Edit3 size={16}/> Change Name</button>
                 <button style={{ padding: '12px 15px', border: 'none', background: 'transparent', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', color: '#555', fontSize: '0.9rem' }}><Settings size={16}/> Manage Account</button>
                 <button style={{ padding: '12px 15px', border: 'none', background: 'transparent', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', color: '#555', fontSize: '0.9rem' }}><Lock size={16}/> Change Password</button>
