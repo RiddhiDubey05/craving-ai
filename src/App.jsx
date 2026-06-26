@@ -1,29 +1,31 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import LoginScreen from './components/LoginScreen';
 import HomePage from './components/HomePage';
 import ChefStoriesPage from './components/ChefStoriesPage';
 import SearchResults from './components/SearchResults';
 import CookChatPage from './components/CookChatPage';
+import ProfilePage from './components/ProfilePage';
 import './index.css';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentRoute, setCurrentRoute] = useState('home'); // 'home', 'stories', 'search', 'cook-chat'
+  const [currentRoute, setCurrentRoute] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchIsVeg, setSearchIsVeg] = useState(false);
   const [cookChatInitialMsg, setCookChatInitialMsg] = useState('');
   const [userName, setUserName] = useState('');
   const [userCity, setUserCity] = useState('');
+  const [userCountry, setUserCountry] = useState('India');
   const [userPosition, setUserPosition] = useState(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
-    // 1. Get Username
     const savedName = localStorage.getItem('userName');
     if (savedName) {
       setUserName(savedName);
     } else {
-      const name = prompt("Welcome to the 3D Chef Experience! What is your name?");
+      const name = prompt('Welcome to the 3D Chef Experience! What is your name?');
       if (name) {
         setUserName(name);
         localStorage.setItem('userName', name);
@@ -32,26 +34,37 @@ export default function App() {
       }
     }
 
-    // 2. Fetch highly accurate Location and Coordinates via geojs (Original API)
+    const savedCity = localStorage.getItem('userCity');
+    const savedCountry = localStorage.getItem('userCountry');
+    const savedLat = localStorage.getItem('userLat');
+    const savedLng = localStorage.getItem('userLng');
+    if (savedCity && savedLat && savedLng) {
+      setUserCity(savedCity);
+      if (savedCountry) { setUserCountry(savedCountry); }
+      setUserPosition([parseFloat(savedLat), parseFloat(savedLng)]);
+      return;
+    }
+
     fetch('https://get.geojs.io/v1/ip/geo.json')
-      .then(res => res.json())
-      .then(data => {
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
         if (data.city) {
           setUserCity(data.city);
         }
-        // Use IP coordinates as a reliable fallback immediately so the map always works
+        if (data.country) {
+          setUserCountry(data.country);
+        }
         setUserPosition([parseFloat(data.latitude), parseFloat(data.longitude)]);
       })
-      .catch(err => {
-        console.error("Could not fetch city:", err);
+      .catch(function(err) {
+        console.error('Could not fetch city:', err);
         setUserCity('an unknown city');
       });
 
-    // 3. Try to get ultra-precise Browser GPS, which will override the IP coordinates if accepted
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => setUserPosition([pos.coords.latitude, pos.coords.longitude]),
-        () => console.warn("Browser GPS denied. Falling back to IP coordinates."),
+        function(pos) { setUserPosition([pos.coords.latitude, pos.coords.longitude]); },
+        function() { console.warn('Browser GPS denied. Falling back to IP coordinates.'); },
         { enableHighAccuracy: true, maximumAge: 0 }
       );
     }
@@ -63,6 +76,49 @@ export default function App() {
     setCurrentRoute('search');
   };
 
+  const handleSaveLocation = async (locationData) => {
+    const cityName = locationData.cityName;
+    const countryName = locationData.countryName;
+    const useGps = locationData.useGps;
+    const coords = locationData.coords;
+
+    if (useGps && coords) {
+      setUserPosition(coords);
+      setUserCity('Current Location');
+      localStorage.setItem('userCity', 'Current Location');
+      localStorage.setItem('userLat', coords[0]);
+      localStorage.setItem('userLng', coords[1]);
+      setIsProfileOpen(false);
+      return;
+    }
+
+    if (cityName) {
+      if (countryName) {
+        setUserCountry(countryName);
+        localStorage.setItem('userCountry', countryName);
+      }
+      try {
+        const res = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(cityName) + '&limit=1');
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lng = parseFloat(data[0].lon);
+          setUserPosition([lat, lng]);
+          setUserCity(cityName);
+          localStorage.setItem('userCity', cityName);
+          localStorage.setItem('userLat', lat);
+          localStorage.setItem('userLng', lng);
+        } else {
+          setUserCity(cityName);
+        }
+      } catch (err) {
+        console.error('Geocoding failed:', err);
+        setUserCity(cityName);
+      }
+      setIsProfileOpen(false);
+    }
+  };
+
   return (
     <>
       <AnimatePresence mode="wait">
@@ -70,22 +126,25 @@ export default function App() {
           <LoginScreen key="login" onLogin={() => setIsAuthenticated(true)} />
         ) : currentRoute === 'home' || currentRoute === 'search' ? (
           <div key="home-container">
-            <HomePage 
+            <HomePage
               userCity={userCity}
+              userCountry={userCountry}
               userPosition={userPosition}
-              onViewStories={() => setCurrentRoute('stories')} 
-              onSearch={handleSearch} 
-              onCookChat={(msg) => { setCookChatInitialMsg(msg || ''); setCurrentRoute('cook-chat'); }} 
+              onViewStories={() => setCurrentRoute('stories')}
+              onSearch={handleSearch}
+              onCookChat={(msg) => { setCookChatInitialMsg(msg || ''); setCurrentRoute('cook-chat'); }}
+              onOpenProfile={() => setIsProfileOpen(true)}
             />
             <AnimatePresence>
               {currentRoute === 'search' && (
-                <SearchResults 
-                  key="search-overlay" 
-                  query={searchQuery} 
+                <SearchResults
+                  key="search-overlay"
+                  query={searchQuery}
                   isVegOnly={searchIsVeg}
-                  onBack={() => setCurrentRoute('home')} 
-                  onNavigate={(dish) => { setCurrentRoute('home'); }} 
-                  onTriggerAssistant={(dish) => { setCookChatInitialMsg(dish); setCurrentRoute('cook-chat'); }} 
+                  userCountry={userCountry}
+                  onBack={() => setCurrentRoute('home')}
+                  onNavigate={() => { setCurrentRoute('home'); }}
+                  onTriggerAssistant={(dish) => { setCookChatInitialMsg(dish); setCurrentRoute('cook-chat'); }}
                 />
               )}
             </AnimatePresence>
@@ -97,6 +156,16 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {isProfileOpen && (
+          <ProfilePage
+            key="profile-overlay"
+            currentCity={userCity}
+            onClose={() => setIsProfileOpen(false)}
+            onSaveLocation={handleSaveLocation}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }
